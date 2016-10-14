@@ -1,5 +1,5 @@
 #!/bin/bash
-# Argument = -c count -r row -f -v
+# Argument = -c count -r row -f -a -v
 
 usage()
 {
@@ -12,6 +12,7 @@ OPTIONS:
    -c      count of rows
    -r      string for each row
    -f      name of the file
+   -a      append to the bottom of file
    -v      Verbose
 EOF
 }
@@ -19,9 +20,10 @@ EOF
 COUNT=
 ROW=
 FILE=
+APPEND=
 VERBOSE=
 
-while getopts ":c:r:f:v" OPTION
+while getopts ":c:r:f:av" OPTION
   do
     case $OPTION in
       c)
@@ -32,6 +34,9 @@ while getopts ":c:r:f:v" OPTION
         ;;
       f)
         FILE=$OPTARG
+        ;;
+      a)
+        APPEND=1
         ;;
       v)
         VERBOSE=1
@@ -52,8 +57,13 @@ else
     FILE="sample.csv"
   fi
 
-  # clear file
-  > $FILE
+  # do not clear file if append
+  if [[ $APPEND -ne 1 ]]
+  then
+    > $FILE
+  fi
+
+  # write to file
   for ((i = 1; i <= $COUNT; i++))
   do
     # write to file
